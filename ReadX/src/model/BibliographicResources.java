@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Calendar;
+
 public abstract class BibliographicResources {
     private String id;
     private String nameResource;
@@ -7,18 +9,25 @@ public abstract class BibliographicResources {
     private String URL;
     private double valueResource;
     protected int numPagesRead;
+    protected String datePublication;
 
-    public BibliographicResources(String id, String nameResource, int numPages, String URL, double valueResource) {
+    public BibliographicResources(String id, String nameResource, int numPages, String URL, double valueResource,
+            String datePublication) {
         this.id = id;
         this.nameResource = nameResource;
         this.numPages = numPages;
         this.URL = URL;
         this.valueResource = valueResource;
         this.numPagesRead = 0;
+        this.datePublication = datePublication;
     }
 
     public String getId() {
         return this.id;
+    }
+
+    public String getDatePublication() {
+        return this.datePublication;
     }
 
     public void setId(String id) {
@@ -63,15 +72,6 @@ public abstract class BibliographicResources {
 
     public void setNumPagesRead(int numPagesRead) {
         this.numPagesRead = numPagesRead;
-    }
-
-    public boolean verifyUserExists(String id, BibliographicResources[] resources) {
-        for (int i = 0; i < resources.length; i++) {
-            if (resources[i] != null && resources[i].getId().equalsIgnoreCase(id)) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }

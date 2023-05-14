@@ -1,25 +1,23 @@
 package ui;
 
 import java.util.Scanner;
-
+import java.util.Calendar;
 import model.Book;
 import model.ControllerSystem;
-import java.util.Calendar;
 import model.Users;
 import model.Regular;
 import model.Premium;
 
 public class Main {
 
-    // esta relación nos ayuda a crear un estado inicial de nuestro programa
     private Scanner reader;
     private ControllerSystem controller;
-    private boolean idExist;
+    private boolean verifyExist;
 
     public Main() {
         reader = new Scanner(System.in);
         controller = new ControllerSystem();
-        idExist = true;
+        verifyExist = true;
 
     }
 
@@ -128,7 +126,6 @@ public class Main {
                 break;
 
             case 3:
-                deleteBook();
                 break;
             case 4:
                 registerMagazine();
@@ -137,7 +134,6 @@ public class Main {
 
                 break;
             case 6:
-                deleteMagazine();
                 break;
             case 0:
                 System.out.println("You returned to the main menu");
@@ -156,7 +152,6 @@ public class Main {
         if (reader.hasNextInt()) {
             option = reader.nextInt();
         } else {
-            // clear reader.
             reader.nextLine();
             option = -1;
         }
@@ -172,8 +167,8 @@ public class Main {
         do {
             System.out.println("Enter user ID");
             String id = reader.nextLine();
-            idExist = controller.verifyUserExists(id);
-            if (idExist) {
+            verifyExist = controller.verifyIdExists(id);
+            if (verifyExist) {
                 System.out.println("ID already exists, please enter another ID.");
             } else {
                 Calendar dateVinculation = Calendar.getInstance();
@@ -193,7 +188,7 @@ public class Main {
                 }
             }
 
-        } while (idExist);
+        } while (verifyExist);
     }
 
     public void registerBook() {
@@ -206,27 +201,34 @@ public class Main {
                 System.out.println("Enter three valid hexadecimal characters - (A-F and 0-9 (ABC - ab7))");
             }
         } while (id.length() != 3 || !id.matches("[0-9A-Fa-f]{3}"));
-        System.out.println("Enter book name");
-        String nameBook = reader.nextLine();
-        System.out.println("Enter the number of pages");
-        int numberPages = reader.nextInt();
-        reader.nextLine();
-        System.out.println("Enter a short review");
-        String review = reader.nextLine();
-        System.out.println("Enter the book genre:");
-        System.out.println("1. Science Fiction");
-        System.out.println("2. Fantasy");
-        System.out.println("3. Historical Novel");
-        int genre = reader.nextInt();
-        reader.nextLine();
-        System.out.println("Enter the publication date of the book - (dd/mm/yyyy)");
-        String datePublication = reader.nextLine();
-        System.out.println("Enter the URL of book cover");
-        String URL = reader.nextLine();
-        System.out.println("Enter the sale value in dollars of the book");
-        double valueSale = reader.nextDouble();
+        do {
+            System.out.println("Enter book name");
+            String nameBook = reader.nextLine();
+            verifyExist = controller.verifyNameExists(nameBook);
 
-        controller.addBook(id, nameBook, numberPages, URL, valueSale, review, genre);
+            if (verifyExist) {
+                System.out.println("Book's name already exists, please enter another name.");
+            } else {
+                System.out.println("Enter the number of pages");
+                int numberPages = validateIntegerOption();
+                System.out.println("Enter a short review");
+                String review = reader.nextLine();
+                System.out.println("Enter the book genre:");
+                System.out.println("1. Science Fiction");
+                System.out.println("2. Fantasy");
+                System.out.println("3. Historical Novel");
+                int genre = reader.nextInt();
+                reader.nextLine();
+                String datePublication = validateDate();
+                System.out.println("Enter the URL of book cover");
+                String URL = reader.nextLine();
+                System.out.println("Enter the sale value in dollars of the book");
+                double valueSale = validerDoubleInput(reader);
+
+                controller.addBook(id, nameBook, numberPages, URL, valueSale, datePublication, review, genre);
+            }
+
+        } while (verifyExist);
     }
 
     public void registerMagazine() {
@@ -239,48 +241,41 @@ public class Main {
                 System.out.println("Enter three valid alphanumeric characters - (A-Z and 0-9 (ABZ - aX8))");
             }
         } while (id.length() != 3 || !id.matches("[0-9a-zA-Z]{3}"));
-        System.out.println("Enter magazine name");
-        String nameMagazine = reader.nextLine();
-        System.out.println("Enter the number of pages");
-        int numberPages = reader.nextInt();
-        reader.nextLine();
-        System.out.println("Enter the publication date of the magazine - (dd/mm/yyyy)");
-        String datePublication = reader.nextLine();
-        System.out.println("Enter the magazine category:");
-        System.out.println("1. Varieties");
-        System.out.println("2. Design");
-        System.out.println("3. Scientific");
-        int category = reader.nextInt();
-        reader.nextLine();
-        System.out.println("Enter the URL of magazine cover");
-        String URL = reader.nextLine();
-        System.out.println("Enter the sale value in dollars of the magazine");
-        double valueSale = reader.nextDouble();
-        System.out.println("Enter the emission periodicity");
-        int emissionPeriodicity = reader.nextInt();
+        do {
+            System.out.println("Enter magazine name");
+            String nameMagazine = reader.nextLine();
+            if (verifyExist) {
+                System.out.println("Magazine's name already exists, please enter another name.");
+            } else {
+                System.out.println("Enter the number of pages");
+                int numberPages = validerIntegerInput(reader);
+                System.out.println("Enter the magazine category:");
+                System.out.println("1. Varieties");
+                System.out.println("2. Design");
+                System.out.println("3. Scientific");
+                int category = reader.nextInt();
+                reader.nextLine();
+                String datePublication = validateDate();
+                System.out.println("Enter the URL of magazine cover");
+                String URL = reader.nextLine();
+                System.out.println("Enter the sale value in dollars of the magazine");
+                double valueSale = validerDoubleInput(reader);
+                System.out.println("Enter the emission periodicity");
+                int emissionPeriodicity = validerIntegerInput(reader);
 
-        controller.addMagazine(id, nameMagazine, numberPages, URL, valueSale, category,
-                emissionPeriodicity);
+                controller.addMagazine(id, nameMagazine, numberPages, URL, valueSale, datePublication, category,
+                        emissionPeriodicity);
+            }
+        } while (verifyExist);
+
     }
 
-    public void deleteBook() {
+    public void deleteResource() {
         reader.nextLine();
-        System.out.println("Enter the book's ID to eliminate");
+        System.out.println("Enter the resource's ID to eliminate");
         String id = reader.nextLine();
 
-        controller.removeBook(id);
-    }
-
-    public void verify() {
-
-    }
-
-    public void deleteMagazine() {
-        reader.nextLine();
-        System.out.println("Enter the magazine's ID to eliminate");
-        String id = reader.nextLine();
-
-        controller.removeMagazine(id);
+        controller.removeResource(id);
     }
 
     public void buyBook() {
@@ -291,6 +286,57 @@ public class Main {
     public void buyMagazine() {
         System.out.println("Enter the Magazine's name to buy");
         String nameMagazine = reader.nextLine();
+    }
+
+    public String validateDate() {
+        boolean validDate;
+        String date;
+        do {
+            System.out.println("Enter publication date (dd/MM/yyyy):");
+            date = reader.nextLine();
+            validDate = controller.validateDate(date);
+            if (!validDate) {
+                System.out.println("Invalid date format. Please enter a date in the format dd/MM/yyyy.");
+            }
+        } while (!validDate);
+        return date;
+    }
+
+    public static int validerIntegerInput(Scanner reader) {
+        while (!reader.hasNextInt()) {
+            System.out.println("Input inválido. Por favor ingrese un número entero.");
+            reader.next();
+        }
+        return reader.nextInt();
+    }
+
+    public static double validerDoubleInput(Scanner reader) {
+        while (!reader.hasNextDouble()) {
+            System.out.println("Input inválido. Por favor ingrese un número valido en dolares.");
+            reader.next();
+        }
+        return reader.nextDouble();
+    }
+
+    public void menuModify() {
+        System.out.println("Seleccione la información a modificar:");
+        System.out.println("1. Nombre");
+        System.out.println("2. Reseña");
+        System.out.println("3. URL de portada");
+        System.out.println("4. Valor de venta / Suscripción");
+        int option = validerIntegerInput(reader);
+
+        switch (option) {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+
+        }
     }
 
 }
