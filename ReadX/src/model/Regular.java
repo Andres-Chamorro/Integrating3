@@ -3,20 +3,22 @@ package model;
 import java.util.Calendar;
 
 public class Regular extends Users {
-    private static final int MAX_BOOKS = 5;
-    private static final int MAX_MAGAZINES = 2;
+    private int cantMaxBooks;
+    private int cantMaxMagazine;
     private static final boolean HAS_ADS = true;
 
     public Regular(String nameUser, String id, Calendar dateVinculation) {
         super(nameUser, id, dateVinculation);
+        this.cantMaxBooks = 5;
+        this.cantMaxMagazine = 2;
     }
 
     public int getMaxBooks() {
-        return MAX_BOOKS;
+        return cantMaxBooks;
     }
 
     public int getMaxMagazines() {
-        return MAX_MAGAZINES;
+        return cantMaxMagazine;
     }
 
     public boolean hasAds() {
