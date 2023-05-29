@@ -263,4 +263,19 @@ public abstract class BibliographicResources {
     public int getTotalPages() {
         return numPages;
     }
+
+    @Override
+    public String toString() {
+        String format = "| %-10s | %-20s | %-10s | %-10s |\n";
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("+------------+----------------------+------------+------------+\n");
+        sb.append("|     id     |      Resource        |   Pages    |   Value    |\n");
+        sb.append("+------------+----------------------+------------+------------+\n");
+        sb.append(String.format(format, getId(), getNameResource(), getNumPages(), getValueResource()));
+        sb.append("+------------+----------------------+------------+------------+\n");
+
+        return sb.toString();
+    }
+
 }

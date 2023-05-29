@@ -7,7 +7,7 @@ import java.util.Calendar;
 /**
  * The "Book" class extends the "BibliographicResources" class in Java.
  */
-public class Book extends BibliographicResources {
+public class Book extends BibliographicResources implements Sellable {
     private String review;
     private GenreBook genreBook;
     private int numBookSold;
@@ -102,9 +102,10 @@ public class Book extends BibliographicResources {
     }
 
     /**
-     * The function increments the number of books sold by one.
+     * The "sell" function increments the number of books sold by one.
      */
-    public void sellBook() {
+    @Override
+    public void sell() {
         this.numBookSold++;
     }
 

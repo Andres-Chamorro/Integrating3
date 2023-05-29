@@ -3,6 +3,7 @@ package model;
 
 import java.util.Calendar;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * The class is named ControllerSystem and its purpose is not specified as there
@@ -22,6 +23,8 @@ public class ControllerSystem {
     // program.
     private ArrayList<Users> users;
     private ArrayList<BibliographicResources> resources;
+    private ArrayList<Object> testObjects = new ArrayList<>();
+    Random random = new Random();
     private static final int ITEMS_PER_PAGE = 25;
 
     // The above code is defining a constructor for a class called
@@ -108,7 +111,7 @@ public class ControllerSystem {
                 break;
             default:
                 System.out.println("--------------------------------------------------");
-                System.out.println("invalid option");
+                System.out.println("invalid option, genre incorrect, try again");
                 System.out.println("--------------------------------------------------");
 
                 return;
@@ -170,7 +173,7 @@ public class ControllerSystem {
                 break;
             default:
                 System.out.println("--------------------------------------------------");
-                System.out.println("invalid option");
+                System.out.println("invalid option, category incorrect, try again");
                 System.out.println("--------------------------------------------------");
                 return;
         }
@@ -351,7 +354,7 @@ public class ControllerSystem {
      *              being sold.
      */
     public void sellBook(Users users, Book book) {
-        book.sellBook();
+        book.sell();
         users.addResourceToLibrary(book);
 
     }
@@ -371,7 +374,7 @@ public class ControllerSystem {
      *                 magazine that a user can subscribe to.
      */
     public void suscribiteMagazine(Users users, Magazine magazine) {
-        magazine.addSuscriptionActive();
+        magazine.sell();
         users.addResourceToLibrary(magazine);
 
     }
@@ -564,31 +567,40 @@ public class ControllerSystem {
      */
     public void generateTopReadsReport() {
 
-        System.out.println("----- Top 5 Most Read Books -----");
-        int bookCount = 0;
-        for (int i = 0; i < resources.size() && bookCount < 5; i++) {
-            BibliographicResources resource = resources.get(i);
-            if (resource instanceof Book) {
-                Book book = (Book) resource;
-                System.out.println("Name: " + book.getNameResource());
-                System.out.println("Genre: " + book.getGenreBook().toString());
-                System.out.println("Pages read: " + book.getNumPagesRead());
-                System.out.println("------------------------");
-                bookCount++;
+        if (resources.isEmpty()) {
+            System.out.println("No books available in the library.");
+        } else {
+            System.out.println("----- Top 5 Most Read Books -----");
+            int bookCount = 0;
+            for (int i = 0; i < resources.size() && bookCount < 5; i++) {
+                BibliographicResources resource = resources.get(i);
+                if (resource instanceof Book) {
+                    Book book = (Book) resource;
+                    System.out.println("Name: " + book.getNameResource());
+                    System.out.println("Genre: " + book.getGenreBook().toString());
+                    System.out.println("Pages read: " + book.getNumPagesRead());
+                    System.out.println("------------------------");
+                    bookCount++;
+                }
             }
         }
 
-        System.out.println("----- Top 5 Most Read Magazines -----");
-        int magazineCount = 0;
-        for (int i = 0; i < resources.size() && magazineCount < 5; i++) {
-            BibliographicResources resource = resources.get(i);
-            if (resource instanceof Magazine) {
-                Magazine magazine = (Magazine) resource;
-                System.out.println("Name: " + magazine.getNameResource());
-                System.out.println("Category: " + magazine.getCategory().toString());
-                System.out.println("Pages read: " + resource.getNumPagesRead());
-                System.out.println("------------------------");
-                magazineCount++;
+        if (resources.isEmpty()) {
+            System.out.println("No magazines available in the library.");
+
+        } else {
+            System.out.println("----- Top 5 Most Read Magazines -----");
+            int magazineCount = 0;
+            for (int i = 0; i < resources.size() && magazineCount < 5; i++) {
+                BibliographicResources resource = resources.get(i);
+                if (resource instanceof Magazine) {
+                    Magazine magazine = (Magazine) resource;
+                    System.out.println("Name: " + magazine.getNameResource());
+                    System.out.println("Category: " + magazine.getCategory().toString());
+                    System.out.println("Pages read: " + resource.getNumPagesRead());
+                    System.out.println("------------------------");
+                    magazineCount++;
+                }
             }
         }
     }
@@ -682,4 +694,143 @@ public class ControllerSystem {
         System.out.println("Active subscriptions: " + scientificCount);
         System.out.println("Total amount paid: $" + scientificTotalPayment);
     }
+
+    /**
+     * This function initializes and generates test data for users, books, and
+     * magazines, and prints
+     * them in formatted tables.
+     */
+    public void TestInit() {
+        for (int i = 0; i < 10; i++) {
+            String userName = "Regular User " + (i + 1);
+            String userId = generateRandomNumber();
+            Calendar joinDate = Calendar.getInstance();
+            joinDate.add(Calendar.DAY_OF_MONTH, -random.nextInt(365));
+
+            Regular regularUser = new Regular(userName, userId, joinDate);
+            users.add(regularUser);
+        }
+
+        // Generate premium users
+        for (int i = 0; i < 10; i++) {
+            String userName = "Premium User " + (i + 1);
+            String userId = generateRandomNumber();
+            Calendar joinDate = Calendar.getInstance();
+            joinDate.add(Calendar.DAY_OF_MONTH, -random.nextInt(365));
+
+            Premium premiumUser = new Premium(userName, userId, joinDate);
+            users.add(premiumUser);
+        }
+        // Generar libros
+        for (int i = 0; i < 20; i++) {
+            String bookId = generateRandomHexId(3);
+            String bookName = "Book" + i;
+            int numPages = random.nextInt(500) + 100;
+            String url = "www.book" + (i + 1) + ".com";
+            double value = Math.round((random.nextDouble() * 50 + 10) * 100.0) / 100.0;
+            Calendar datePublication = Calendar.getInstance();
+            String review = "Review for Book " + (i + 1);
+            GenreBook genreBook = GenreBook.values()[random.nextInt(GenreBook.values().length)];
+
+            Book book = new Book(bookId, bookName, numPages, url, value, datePublication, review, genreBook);
+            resources.add(book);
+        }
+
+        // Generar revistas
+        for (int i = 0; i < 20; i++) {
+            String magazineId = generateRandomAlphanumericId(3);
+            String magazineName = "Magazine " + (i + 1);
+            int numPages = random.nextInt(100) + 50;
+            String url = "www.magazine" + (i + 1) + ".com";
+            double value = Math.round((random.nextDouble() * 50 + 10) * 100.0) / 100.0;
+            Calendar datePublication = Calendar.getInstance();
+            Category category = Category.values()[random.nextInt(Category.values().length)];
+            int emissionPeriodicity = random.nextInt(30) + 1;
+
+            Magazine magazine = new Magazine(magazineId, magazineName, numPages, url, value,
+                    datePublication, category, emissionPeriodicity);
+            resources.add(magazine);
+        }
+
+        System.out.println("+----------------------+------------+");
+        System.out.println("|      NameUser        |     id     |");
+        System.out.println("+----------------------+------------+");
+
+        int maxRows = users.size();
+
+        for (int i = 0; i < maxRows; i++) {
+            Users user = users.get(i);
+            String userName = String.format("%-20s",
+                    user.getNameUser().substring(0, Math.min(user.getNameUser().length(), 19)));
+            System.out.printf("| %s | %-10s |\n", userName, user.getId());
+        }
+
+        System.out.println("+----------------------+------------+");
+        System.out.println();
+        System.out.println("+------------+----------------------+------------+------------+");
+        System.out.println("|     id     |      Resource        |   Pages    |   Value    |");
+        System.out.println("+------------+----------------------+------------+------------+");
+
+        for (int i = 0; i < resources.size(); i++) {
+            if (resources.get(i) instanceof Book) {
+                Book book = (Book) resources.get(i);
+                System.out.printf("| %-10s | %-20s | %-10s | %-10s |\n", book.getId(),
+                        book.getNameResource(), book.getNumPages(), book.getValueResource());
+            }
+        }
+
+        System.out.println("+------------+----------------------+------------+------------+");
+        System.out.println();
+        System.out.println("+------------+----------------------+------------+------------+");
+        System.out.println("|     id     |      Resource        |   Pages    |   Value    |");
+        System.out.println("+------------+----------------------+------------+------------+");
+
+        for (int i = 0; i < resources.size(); i++) {
+            if (resources.get(i) instanceof Magazine) {
+                Magazine magazine = (Magazine) resources.get(i);
+                System.out.printf("| %-10s | %-20s | %-10s | %-10s |\n", magazine.getId(),
+                        magazine.getNameResource(), magazine.getNumPages(), magazine.getValueResource());
+            }
+        }
+
+        System.out.println("+------------+----------------------+------------+------------+");
+    }
+
+    private String generateRandomNumber() {
+        StringBuilder cedulaNumber = new StringBuilder();
+
+        for (int i = 0; i < 5; i++) {
+            int digit = random.nextInt(5);
+            cedulaNumber.append(digit);
+        }
+
+        return cedulaNumber.toString();
+    }
+
+    private String generateRandomHexId(int length) {
+        StringBuilder hexId = new StringBuilder();
+
+        for (int i = 0; i < length; i++) {
+            int digit = random.nextInt(16); // Genera un número aleatorio de 0 a 15
+            hexId.append(Integer.toHexString(digit)); // Convierte el número a su representación hexadecimal y lo agrega
+                                                      // al StringBuilder
+        }
+
+        return hexId.toString().toUpperCase(); // Convierte la cadena a mayúsculas y la devuelve
+    }
+
+    private String generateRandomAlphanumericId(int length) {
+        StringBuilder alphanumericId = new StringBuilder();
+
+        String alphanumericChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for (int i = 0; i < length; i++) {
+            int randomIndex = random.nextInt(alphanumericChars.length());
+            char randomChar = alphanumericChars.charAt(randomIndex);
+            alphanumericId.append(randomChar);
+        }
+
+        return alphanumericId.toString();
+    }
+
 }

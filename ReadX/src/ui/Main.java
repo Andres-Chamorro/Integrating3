@@ -3,13 +3,7 @@ package ui;
 
 import java.util.Scanner;
 import java.util.Calendar;
-import model.Book;
-import model.Magazine;
-import model.ControllerSystem;
-import model.Users;
-import model.Regular;
-import model.Premium;
-import model.BibliographicResources;
+import model.*;
 
 /**
  * The above code defines a Java class named "Main".
@@ -113,7 +107,7 @@ public class Main {
     public int getOptionReports() {
         int option = 0;
 
-        System.out.println(bibliographicProductMenu());
+        System.out.println(reportMenu());
         option = validateIntegerOption();
 
         return option;
@@ -169,6 +163,7 @@ public class Main {
                 "2. Register user\n" +
                 "3. Manage Bibliographical Products\n" +
                 "4. Reports\n" +
+                "5. Management tests\n" +
                 "0. Exit the program.\n";
     }
 
@@ -196,6 +191,9 @@ public class Main {
             case 4:
                 option = getOptionReports();
                 executeReportMenuOption(option);
+                break;
+            case 5:
+                controller.TestInit();
                 break;
 
             case 0:
@@ -256,7 +254,7 @@ public class Main {
                 "1. Buy book\n" +
                 "2. Subscribe to magazine\n" +
                 "3. view Library\n" +
-                "0. Logout and Exit the program.\n";
+                "0. Exit main printipal.\n";
     }
 
     /**
@@ -279,8 +277,10 @@ public class Main {
                 break;
             case 0:
                 System.out.println("--------------------------------------------------");
-                System.out.println("Logout successful.");
+                System.out.println("Main Printipal");
                 System.out.println("--------------------------------------------------");
+                System.out.println(loginMenu());
+                option = validateIntegerOption();
                 break;
             default:
                 System.out.println("--------------------------------------------------");
@@ -340,7 +340,9 @@ public class Main {
                 deleteResource();
                 break;
             case 0:
+                System.out.println("--------------------------------------------------");
                 System.out.println("You returned to the main menu");
+                System.out.println("--------------------------------------------------");
                 break;
             default:
                 System.out.println("--------------------------------------------------");
@@ -374,7 +376,7 @@ public class Main {
                 "3. Top 5 books and the Top 5 most read magazines on the platform\n" +
                 "4. number of books sold and total sales value by genre\n" +
                 "5. number of active subscriptions and the total value paid for subscriptions by category\n" +
-                "0. Logout and Exit the program.\n";
+                "0. Exit printipal menu.\n";
     }
 
     /**
@@ -405,7 +407,7 @@ public class Main {
                 break;
             case 0:
                 System.out.println("--------------------------------------------------");
-                System.out.println("Exit program.");
+                System.out.println("Menu Printipal.");
                 System.out.println("--------------------------------------------------");
                 break;
             default:
@@ -493,13 +495,18 @@ public class Main {
         String id;
         System.out.println("Enter book id - (3 hexadecimal characters)");
         do {
-            id = reader.nextLine();
-            if (id.length() != 3 || !id.matches("[0-9A-Fa-f]{3}")) {
-                System.out.println("-------------------------------------------------------------------");
-                System.out.println("Enter three valid hexadecimal characters - (A-F and 0-9 (ABC - ab7))");
-                System.out.println("-------------------------------------------------------------------");
-            }
+            do {
+                id = reader.nextLine();
+                if (id.length() != 3 || !id.matches("[0-9A-Fa-f]{3}")) {
+                    System.out.println("-------------------------------------------------------------------");
+                    System.out.println("Enter three valid hexadecimal characters - (A-F and 0-9 (ABC - ab7))");
+                    System.out.println("-------------------------------------------------------------------");
+                }
+                verifyExist = controller.verifyCodeExists(id);
+                codeVerify(verifyExist);
+            } while (verifyExist);
         } while (id.length() != 3 || !id.matches("[0-9A-Fa-f]{3}"));
+
         do {
             System.out.println("Enter book name");
             String nameBook = reader.nextLine();
@@ -511,14 +518,14 @@ public class Main {
                 System.out.println("-----------------------------------------------------");
             } else {
                 System.out.println("Enter the number of pages");
-                int numberPages = validateIntegerOption();
+                int numberPages = validerIntegerInput(reader);
                 System.out.println("Enter a short review");
                 String review = reader.nextLine();
                 System.out.println("Enter the book genre:");
                 System.out.println("1. Science Fiction");
                 System.out.println("2. Fantasy");
                 System.out.println("3. Historical Novel");
-                int genre = reader.nextInt();
+                int genre = validateIntegerOption();
                 reader.nextLine();
                 Calendar datePublication = validateDate();
                 reader.nextLine();
@@ -544,12 +551,17 @@ public class Main {
         String id;
         System.out.println("Enter magazine id - (3 hexadecimal alphanumeric)");
         do {
-            id = reader.nextLine();
-            if (id.length() != 3 || !id.matches("[0-9a-zA-Z]{3}")) {
-                System.out.println("----------------------------------------------------------------------");
-                System.out.println("Enter three valid alphanumeric characters - (A-Z and 0-9 (ABZ - aX8))");
-                System.out.println("----------------------------------------------------------------------");
-            }
+            do {
+                id = reader.nextLine();
+                if (id.length() != 3 || !id.matches("[0-9a-zA-Z]{3}")) {
+                    System.out.println("----------------------------------------------------------------------");
+                    System.out.println("Enter three valid alphanumeric characters - (A-Z and 0-9 (ABZ - aX8))");
+                    System.out.println("----------------------------------------------------------------------");
+                }
+                verifyExist = controller.verifyCodeExists(id);
+                codeVerify(verifyExist);
+
+            } while (verifyExist);
         } while (id.length() != 3 || !id.matches("[0-9a-zA-Z]{3}"));
         do {
             System.out.println("Enter magazine name");
@@ -758,7 +770,9 @@ public class Main {
                     + "<< -                             Bill                            - >>\n" +
                     "<< --------------------------------------------------------------------- >>\n");
             System.out.println("Book: " + bookName);
+            System.out.println("");
             System.out.println("Amount: $" + amount);
+            System.out.println("");
             System.out.println("Date: " + currentDate.getTime());
             System.out.println("<< --------------------------------------------------------------------- >>");
 
@@ -768,6 +782,7 @@ public class Main {
 
             if (payment >= amount) {
                 double change = payment - amount;
+                System.out.println("<< --------------------------------------------------------------------- >>");
                 System.out.println("Change: $" + change);
 
                 book.setNumBookSold(book.getNumBookSold() + 1);
@@ -849,16 +864,44 @@ public class Main {
 
         controller.displayLibrary(verifyUser);
         System.out.println("--------------------------------------------------");
-        System.out.println("Digite la coordenada (x/y) o el código correspondiente");
-        System.out.println("Digite A para ir a la página anterior");
-        System.out.println("Digite B para ir a la página siguiente");
-        System.out.println("Digite E para salir");
+        System.out.println("Type the coordinate (x/y) or the corresponding code");
+        System.out.println("Type A to go to the previous page");
+        System.out.println("Type B to go to the next page");
+        System.out.println("Enter E to exit");
         System.out.println("--------------------------------------------------");
 
-        while (!input.equalsIgnoreCase("E")) {
+        while (true) {
             input = reader.next();
-            controller.navigateLibrary(verifyUser, input);
 
+            if (input.equalsIgnoreCase("E")) {
+                break; // Salir del bucle while cuando se ingrese "E"
+            }
+
+            controller.navigateLibrary(verifyUser, input);
+            controller.displayLibrary(verifyUser); // Mostrar la biblioteca actualizada después de la navegación
+            System.out.println("--------------------------------------------------");
+            System.out.println("Type the coordinate (x/y) or the corresponding code");
+            System.out.println("Type A to go to the previous page");
+            System.out.println("Type B to go to the next page");
+            System.out.println("Enter E to exit");
+            System.out.println("--------------------------------------------------");
+        }
+    }
+
+    /**
+     * This function prints a message if a resource code already exists.
+     * 
+     * @param verifyExist A boolean variable that indicates whether a resource's
+     *                    code already exists or
+     *                    not. If it is true, it means the code already exists and
+     *                    the user needs to enter a different
+     *                    code.
+     */
+    public void codeVerify(boolean verifyExist) {
+        if (verifyExist) {
+            System.out.println("-----------------------------------------------------");
+            System.out.println("Resource's code already exists, please enter another code.");
+            System.out.println("-----------------------------------------------------");
         }
     }
 

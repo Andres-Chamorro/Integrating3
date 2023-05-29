@@ -9,7 +9,7 @@ import java.util.Calendar;
 /**
  * The "Magazine" class extends the "BibliographicResources" class in Java.
  */
-public class Magazine extends BibliographicResources {
+public class Magazine extends BibliographicResources implements Sellable {
     // These are instance variables of the `Magazine` class in Java.
     private Category category;
     private int emissionPeriodicity;
@@ -105,10 +105,11 @@ public class Magazine extends BibliographicResources {
     }
 
     /**
-     * This function increments the number of active subscriptions.
+     * The "sell" function increments the number of active subscriptions.
      */
-    public void addSuscriptionActive() {
-        numSubsActives++;
+    @Override
+    public void sell() {
+        this.numSubsActives++;
     }
 
     /**

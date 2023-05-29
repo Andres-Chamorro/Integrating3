@@ -123,6 +123,10 @@ public abstract class Users {
         this.nameUser = nameUser;
     }
 
+    public int getTotalPagesRead() {
+        return this.totalPagesRead;
+    }
+
     /**
      * The function returns the ID of an object.
      * 
@@ -186,6 +190,13 @@ public abstract class Users {
      * resources per page.
      */
     public void displayLibrary() {
+        int totalPages = (library.size() - 1) / ITEMS_PER_PAGE + 1;
+
+        if (currentPage < 0 || currentPage >= totalPages) {
+            System.out.println("Page next Empty");
+            return;
+        }
+
         int startIndex = currentPage * ITEMS_PER_PAGE;
         int endIndex = Math.min(startIndex + ITEMS_PER_PAGE, library.size());
 
@@ -251,6 +262,10 @@ public abstract class Users {
             if (currentPage >= totalPageCount) {
                 currentPage = totalPageCount - 1;
             }
+        } else if (input.equalsIgnoreCase("E")) {
+            System.out.println("--------------------------------------------------");
+            System.out.println("Exit");
+            System.out.println("--------------------------------------------------");
         } else if (input.length() == 3 && input.charAt(1) == '/') {
             int x = Character.getNumericValue(input.charAt(0));
             int y = Character.getNumericValue(input.charAt(2));
@@ -390,6 +405,20 @@ public abstract class Users {
             return library.get(index);
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        String format = "| %-20s | %-10s |\n";
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("+----------------------+------------+\n");
+        sb.append("|      NameUser        |     id     |\n");
+        sb.append("+----------------------+------------+\n");
+        sb.append(String.format(format, getNameUser(), getId()));
+        sb.append("+----------------------+------------+\n");
+
+        return sb.toString();
     }
 
 }
